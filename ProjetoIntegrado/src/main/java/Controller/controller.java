@@ -2,6 +2,8 @@ package Controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +15,7 @@ import MODEL.JavaBeans;
 
 //AQUI SÃO COLCADOS OS LINKS DOS BOSTÕES. O SERVELT VAI O REDIRECIONAMENTO PARA AS PAGINAS/ EXISTE ALGUNS PEQUENOS ADENDOS JÁ QUE ELE TAMBÉM PODE RECEBER DADOS DE OUTRO LUGAR POR EXEMPLO DOS FORMULARIO O "/INSERT" TRAZ A OS DADOS DA CAMADA QUE CRIA UMA NOVA SENHA. O URL... É OBRIGATORIO PARA O FUNCIONAMENTO. OUTRA COISA IMPORTANTE É NÃO ESQUECER DAS  {}  
 
-@WebServlet(urlPatterns = { "/controller", "/main", "/novo" })
+@WebServlet(urlPatterns = { "/controller", "/main", "/novo"  , "/main2"})
 
 public class controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -43,8 +45,14 @@ public class controller extends HttpServlet {
 		}
 
 		else if (action.equals("/novo")) {
-			novasenha(request, response);
-		} else {
+			novasenhaemail(request, response);
+		} 
+		
+		else if (action.equals("/main2")) {
+			tabela2(request, response);
+		} 
+		
+		else {
 			response.sendRedirect("index.htm");
 		}
 
@@ -61,7 +69,18 @@ public class controller extends HttpServlet {
 
 		//response.sendRedirect("cadastro.jsp");
 //AQUI SERÁ CRIADO UM OBJETO QUE VAI RECEBER OS DADOS DA CLASSE JAVABEANS
+		
 		ArrayList<JavaBeans> lista  = conexao.listarCadastros();
+		
+		
+	//AQUI OS DADOS SERÃO ENVIADOS PARA A CLASSE JSP	
+		
+		request.setAttribute("contatos", lista);
+		            
+		RequestDispatcher rd = request.getRequestDispatcher("cadastro.jsp");
+		rd.forward(request, response);
+		
+		
 		for (int i = 0 ; i<lista.size(); i++) {
 			
 			System.out.println(lista.get(i).getIdcon());
@@ -69,6 +88,29 @@ public class controller extends HttpServlet {
 			System.out.println(lista.get(i).getSenha());
 			
 		}
+		
+		
+	}
+	protected void tabela2(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		ArrayList<JavaBeans> lista  = conexao.listarCadastros();
+		
+		
+		request.setAttribute("dados", lista);
+		
+		
+		RequestDispatcher rb = request.getRequestDispatcher("Tabela.jsp");
+		rb.forward(request, response);
+		
+		for (int i = 0 ; i<lista.size(); i++) {
+			
+			System.out.println(lista.get(i).getIdcon());
+			System.out.println(lista.get(i).getEmail());
+			System.out.println(lista.get(i).getSenha());
+			
+		}
+		
 		
 	}
 
@@ -79,7 +121,7 @@ public class controller extends HttpServlet {
 	
 	
 	// NOVO CADASTRO
-	protected void novasenha(HttpServletRequest request, HttpServletResponse response)
+	protected void novasenhaemail(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// ESSE METODO FUNCIONA DA MESMA MANEIRA DO METODO ACIMA
 
@@ -108,5 +150,6 @@ public class controller extends HttpServlet {
 	
 	
 	}
-
+	
+	
 }
